@@ -24,13 +24,12 @@ public class CarHandler : MonoBehaviour
         if (inputVector.y > 0)
         {
             Accelerate();
-            return;
         }
         if (inputVector.y < 0)
         {
             Brake();
-            return;
         }
+        // Always allow steering alongside acceleration/braking
         Steer();
 
     }
@@ -40,12 +39,14 @@ public class CarHandler : MonoBehaviour
         carRigidbody.AddForce(transform.forward * acceleration * inputVector.y);
     }
     void Brake(){
-        //Dont use brake 
-        if (carRigidbody.linearVelocity.z <= 0)
+        // Apply brake only if moving forward relative to the car's forward
+        float forwardSpeed = Vector3.Dot(carRigidbody.linearVelocity, transform.forward);
+        if (forwardSpeed <= 0f)
         {
             return;
         }
-        carRigidbody.AddForce(carRigidbody.transform.forward * brakeForce * inputVector.y);
+        // Apply opposing acceleration proportional to brake input
+        carRigidbody.AddForce(-transform.forward * brakeForce * Mathf.Abs(inputVector.y), ForceMode.Acceleration);
     }
     void Steer(){
         if (Mathf.Abs(inputVector.x) > 0)

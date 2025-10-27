@@ -16,6 +16,9 @@ public class ProgressCounter : MonoBehaviour
     float unitsToMeters = 1f;
 
     float startZ;
+    int currentMeters;
+
+    public int CurrentMeters => currentMeters;
 
     /// <summary>
     /// Initializes the starting reference position for progress calculation.
@@ -47,8 +50,8 @@ public class ProgressCounter : MonoBehaviour
     /// <param name="meters">Distance in meters to display.</param>
     void UpdateUI(float meters)
     {
-        int whole = Mathf.FloorToInt(meters);
-        output.text = $"{label}: {whole} m";
+        currentMeters = Mathf.FloorToInt(meters);
+        output.text = $"{label}: {currentMeters} m";
     }
 }
 

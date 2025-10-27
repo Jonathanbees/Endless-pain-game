@@ -33,6 +33,13 @@ public class CarHandler : MonoBehaviour
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
 
+    //Stats
+    float carStartPositionZ;
+    float distanceTraveled = 0;
+
+    public float DistanceTraveled => distanceTraveled;
+
+
     //exploded state
     bool isExploded = false;
     bool isPlayer = true;
@@ -44,6 +51,7 @@ public class CarHandler : MonoBehaviour
         {
             carEngineAS.Play();
         }
+        carStartPositionZ = transform.position.z;
     }
 
     // Update is called once per frame
@@ -56,6 +64,9 @@ public class CarHandler : MonoBehaviour
         }
 
         UpdateCarAudio();
+
+        //updated distance traveled
+        distanceTraveled = transform.position.z - carStartPositionZ;
     }
     void FixedUpdate()
     {

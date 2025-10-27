@@ -66,5 +66,5 @@
     "explorer.fileNesting.patterns": {
         "*.sln": "*.csproj"
     },
-    "dotnet.defaultSolution": "Endless-pain-game.sln"
+    "dotnet.defaultSolution": "Endless-pain-game-1.0.1.sln"
 }

@@ -42,10 +42,14 @@ public class CarHandler : MonoBehaviour
 
     //exploded state
     bool isExploded = false;
-    bool isPlayer = true;
+    bool isPlayer; // Remover el = true
+
     void Start()
     {
         carRigidbody = GetComponent<Rigidbody>();
+        
+        // Determinar si es jugador basado en el tag
+        isPlayer = CompareTag("Player");
 
         if (isPlayer && carEngineAS != null)
         {
@@ -174,6 +178,12 @@ public class CarHandler : MonoBehaviour
     }
     public void SetInputVector(Vector2 inputVector)
     {
+        // Solo aceptar input si es el jugador
+        if (!isPlayer)
+        {
+            return; // Los carros IA ignoran el input manual
+        }
+        
         // Only normalize if there's actual input to avoid residual values
         if (inputVector.magnitude > 0.1f)
         {

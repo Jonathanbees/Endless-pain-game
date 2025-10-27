@@ -59,6 +59,12 @@ public class CarHandler : MonoBehaviour
     }
     void FixedUpdate()
     {
+        if (isExploded)
+        {
+            // Prevent further movement forces after explosion/game over
+            carRigidbody.linearDamping = 5f;
+            return;
+        }
         // Auto acceleration (always active unless braking)
         if (inputVector.y >= 0) // Only auto-accelerate when not pressing brake (down arrow)
         {
@@ -177,5 +183,14 @@ public class CarHandler : MonoBehaviour
     public void SetMaxAutoSpeed(float newMaxSpeed)
     {
         maxAutoSpeed = newMaxSpeed;
+    }
+
+    // Called on Game Over / explosion to stop control and fade audio
+    public void TriggerExploded()
+    {
+        isExploded = true;
+        // Clear inputs to avoid residual steering/forces
+        inputVector = Vector2.zero;
+        Debug.Log("[CarHandler] TriggerExploded: Disabling forces and fading audio.");
     }
 }

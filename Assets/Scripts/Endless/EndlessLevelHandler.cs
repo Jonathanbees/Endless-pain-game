@@ -6,9 +6,8 @@ public class EndlessLevelHandler : MonoBehaviour
     [SerializeField]
     GameObject[] sectionPrefabs;
 
-    GameObject[] sectionsPool = new GameObject[20]; // all sections 
-
-    GameObject[] sections = new GameObject[10]; // visible sectios
+    GameObject[] sectionsPool = new GameObject[20];
+    GameObject[] sections = new GameObject[10];
 
     Transform playerCarTransform;
 
@@ -19,14 +18,59 @@ public class EndlessLevelHandler : MonoBehaviour
 
     void Start()
     {
-        playerCarTransform = GameObject.FindGameObjectWithTag("Player").transform;
+        StartCoroutine(WaitForPlayerAndInitialize());
+    }
+
+    IEnumerator WaitForPlayerAndInitialize()
+    {
+        Debug.Log("Buscando jugador...");
+        
+        // Esperar hasta que el jugador sea creado
+        while (playerCarTransform == null)
+        {
+            GameObject playerCarGO = GameObject.FindGameObjectWithTag("Player");
+            if (playerCarGO != null)
+            {
+                playerCarTransform = playerCarGO.transform;
+                Debug.Log($"¡Jugador encontrado!: {playerCarGO.name} en posición {playerCarTransform.position}");
+            }
+            else
+            {
+                Debug.Log("Jugador aún no encontrado...");
+            }
+            yield return new WaitForSeconds(0.1f);
+        }
+
+        // Ahora inicializar las secciones
+        Debug.Log("Iniciando InitializeSections...");
+        InitializeSections();
+        StartCoroutine(UpdateLessOftenCO());
+    }
+
+    void InitializeSections()
+    {
+        // Debug para verificar si hay prefabs asignados
+        if (sectionPrefabs == null || sectionPrefabs.Length == 0)
+        {
+            Debug.LogError("¡No hay section prefabs asignados en el EndlessLevelHandler!");
+            return;
+        }
+
+        Debug.Log($"Inicializando {sectionPrefabs.Length} tipos de secciones...");
 
         int prefabIndex = 0;
 
         for (int i = 0; i < sectionsPool.Length; i++)
         {
+            if (sectionPrefabs[prefabIndex] == null)
+            {
+                Debug.LogError($"Section prefab en índice {prefabIndex} es null!");
+                continue;
+            }
+
             sectionsPool[i] = Instantiate(sectionPrefabs[prefabIndex]);
             sectionsPool[i].SetActive(false);
+            Debug.Log($"Creada sección {i}: {sectionsPool[i].name}");
 
             prefabIndex++;
             if (prefabIndex >= sectionPrefabs.Length)
@@ -41,9 +85,10 @@ public class EndlessLevelHandler : MonoBehaviour
             randomSection.SetActive(true);
 
             sections[i] = randomSection;
+            Debug.Log($"Sección activa {i}: {randomSection.name} en posición {randomSection.transform.position}");
         }
-        
-        StartCoroutine(UpdateLessOftenCO());
+
+        Debug.Log("¡Secciones inicializadas correctamente!");
     }
 
     IEnumerator UpdateLessOftenCO()

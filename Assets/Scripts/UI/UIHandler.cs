@@ -12,9 +12,26 @@ public class UIHandler : MonoBehaviour
     [SerializeField]
     CarHandler playerCar;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
+    {
+        // Buscar el texto dentro del Panel
+        if (distanceTraveledText == null)
+        {
+            GameObject panel = GameObject.Find("Canvas/Distance Canvas/Panel");
+            if (panel != null)
+            {
+                distanceTraveledText = panel.GetComponentInChildren<TextMeshProUGUI>();
+                if (distanceTraveledText != null)
+                {
+                    Debug.Log("UI Text encontrado automáticamente: " + distanceTraveledText.name);
+                }
+            }
+        }
 
-    void Awake()
+        FindPlayerCar();
+    }
+
+    void FindPlayerCar()
     {
         if (playerCar == null)
         {
@@ -22,17 +39,19 @@ public class UIHandler : MonoBehaviour
             if (playerCarGO != null)
             {
                 playerCar = playerCarGO.GetComponent<CarHandler>();
+                Debug.Log("Player Car encontrado automáticamente: " + playerCarGO.name);
             }
         }
     }
-    void Start()
-    {
 
-    }
-
-    // Update is called once per frame
     void Update()
     {
+        // Re-buscar el jugador si se perdió la referencia
+        if (playerCar == null)
+        {
+            FindPlayerCar();
+        }
+
         if (playerCar != null && distanceTraveledText != null)
         {
             distanceTraveledText.text = playerCar.DistanceTraveled.ToString("000000");

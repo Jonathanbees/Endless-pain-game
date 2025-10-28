@@ -48,6 +48,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 9e6c2ff1afc15ca4aa2a4cb5e931edbe, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: c987e6dde1a91374a96cb7fdb384266d, type: 2}
     - target: {fileID: 919132149155446097, guid: 9e6c2ff1afc15ca4aa2a4cb5e931edbe, type: 3}
       propertyPath: m_Name
       value: car_stationwagon
@@ -106,7 +110,7 @@ PrefabInstance:
       objectReference: {fileID: 5259701714482270384}
     - target: {fileID: 3047485056818227411, guid: 4794870c9365b7b47bb46d294165376a, type: 3}
       propertyPath: m_Name
-      value: Car Base PF Variant
+      value: Car Sedan PF Variant
       objectReference: {fileID: 0}
     - target: {fileID: 6142991422668171841, guid: 4794870c9365b7b47bb46d294165376a, type: 3}
       propertyPath: m_LocalPosition.x

@@ -1,6 +1,12 @@
 # Endless Pain — Unity Car Endless Runner
 
+## Demo Video
+- Watch a short gameplay [demo](https://youtu.be/24Q5KYEGYJo)
+
 A fast, stylized endless driving game built with Unity. You control a car dodging traffic on an infinite road while the world streams in front of you. Simple controls, clean look (toon-like shading), and a quick reset loop.
+
+<img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/6699f517-2f12-4615-932f-731afc16fc99" />
+
 
 ## Overview
 - Objective: drive as far as possible without crashing.
@@ -95,15 +101,15 @@ A fast, stylized endless driving game built with Unity. You control a car dodgin
 
 ## Screenshots
 - Main Menu preview
-  - [PLACEHOLDER: add image here]
+  - <img width="1919" height="1079" alt="Captura de pantalla 2025-10-28 105306" src="https://github.com/user-attachments/assets/30cbbc26-29a5-44c1-8844-90df23cb419d" />
+  - <img width="1919" height="1079" alt="Captura de pantalla 2025-10-28 105312" src="https://github.com/user-attachments/assets/45cab85b-bf2c-4f93-98ac-e1fa5f571006" />
+  - <img width="1919" height="1077" alt="Captura de pantalla 2025-10-28 105323" src="https://github.com/user-attachments/assets/8a5391b8-54c1-4849-8778-885052eba46c" />
+  
 - In-Game (HUD + traffic)
-  - [PLACEHOLDER: add image here]
-- Game Over overlay
-  - [PLACEHOLDER: add image here]
+  - <img width="1919" height="1079" alt="Captura de pantalla 2025-10-28 105336" src="https://github.com/user-attachments/assets/ca44bebd-6681-4a17-8b6f-a973ad4f0d58" />
 
-## Demo Video
-- Watch a short gameplay demo:
-  - [PLACEHOLDER: paste video link here]
+- Game Over overlay
+  - <img width="1919" height="1079" alt="Captura de pantalla 2025-10-28 105349" src="https://github.com/user-attachments/assets/ff860a08-7e0c-4964-a416-ac9553dab884" />
 
 ## Credits / Assets
 - Environment and vehicles use assets under `Assets/Models/KayKit_City_Builder_Bits_1.0_FREE` by KayKit. Please ensure proper attribution per their license in your final release.

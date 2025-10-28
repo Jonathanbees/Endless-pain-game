@@ -75,6 +75,48 @@ public class PlayerCarSpawner : MonoBehaviour
         
         // Asegurar que tenga el tag correcto
         playerCarInstance.tag = "Player";
+
+        // Garantizar componentes críticos para Game Over y colisiones
+        var rb = playerCarInstance.GetComponent<Rigidbody>();
+        if (rb == null)
+        {
+            rb = playerCarInstance.AddComponent<Rigidbody>();
+        }
+
+        // Asegurar CarHandler (control + distancia)
+        var carHandler = playerCarInstance.GetComponent<CarHandler>();
+        if (carHandler == null)
+        {
+            carHandler = playerCarInstance.AddComponent<CarHandler>();
+        }
+
+        // Asegurar InputHandler (para el jugador)
+        var inputHandler = playerCarInstance.GetComponent<InputHandler>();
+        if (inputHandler == null)
+        {
+            inputHandler = playerCarInstance.AddComponent<InputHandler>();
+        }
+
+        // Asegurar CarCollisionHandler (evento de impacto fuerte)
+        var collisionHandler = playerCarInstance.GetComponent<CarCollisionHandler>();
+        if (collisionHandler == null)
+        {
+            collisionHandler = playerCarInstance.AddComponent<CarCollisionHandler>();
+        }
+
+        // Asegurar DeathController y vincular referencias
+        var death = playerCarInstance.GetComponent<DeathController>();
+        if (death == null)
+        {
+            death = playerCarInstance.AddComponent<DeathController>();
+        }
+        // Enforce heavy impact => death
+        death.SetAlwaysDieOnHeavyImpact(true);
+
+        // El DeathController resuelve GameOverScreen automáticamente si no se asigna;
+        // aquí solo garantizamos refs internas básicas.
+        // (Sus campos son [SerializeField], pero se autollenan en Reset/Awake también.)
+        // Nada más requerido aquí.
         
         // Actualizar la cámara
         if (virtualCamera != null)

@@ -36,12 +36,31 @@ public class ProgressCounter : MonoBehaviour
     /// </summary>
     void Update()
     {
-        if (target == null || output == null)
+        if (output == null)
             return;
 
+        // Try late-binding target if it wasn't ready at Start
+        if (target == null)
+            target = GameObject.FindGameObjectWithTag("Player")?.transform;
+        if (target == null)
+        {
+            // Still no target; keep showing last value
+            return;
+        }
+
+        // Prefer CarHandler distance if available (orientation-agnostic)
+        var car = target.GetComponent<CarHandler>();
+        if (car != null)
+        {
+            float meters = Mathf.Max(0f, car.DistanceTraveled) * unitsToMeters;
+            UpdateUI(meters);
+            return;
+        }
+
+        // Fallback: world-space Z delta
         float dz = Mathf.Max(0f, target.position.z - startZ);
-        float meters = dz * unitsToMeters;
-        UpdateUI(meters);
+        float metersFallback = dz * unitsToMeters;
+        UpdateUI(metersFallback);
     }
 
     /// <summary>

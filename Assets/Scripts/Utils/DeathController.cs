@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Detects lethal crashes and triggers a game over screen.
@@ -25,7 +26,7 @@ public class DeathController : MonoBehaviour
 
     [Header("Additional Conditions")]
     [Tooltip("If enabled, any heavy impact (as detected by CarCollisionHandler) causes immediate death, without checking speed drop.")]
-    [SerializeField] bool dieOnAnyHeavyImpact = false;
+    [SerializeField] bool dieOnAnyHeavyImpact = true;
     [Tooltip("Optional absolute speed drop threshold (m/s). If > 0 and exceeded after impact, causes death.")]
     [SerializeField] float minAbsoluteDrop = 0f;
 
@@ -56,15 +57,22 @@ public class DeathController : MonoBehaviour
 #else
         if (progressCounter == null) progressCounter = FindObjectOfType<ProgressCounter>();
 #endif
+
+        // Try to resolve Game Over screen dynamically if not assigned via inspector
+        TryResolveGameOverScreen();
     }
 
     void OnEnable()
     {
-        if (collisionHandler != null)
+        if (collisionHandler != null && collisionHandler.onHeavyImpact != null)
         {
             // Subscribe to heavy impact event
             collisionHandler.onHeavyImpact.AddListener(OnHeavyImpact);
             if (debugLogs) Debug.Log("[DeathController] Subscribed to onHeavyImpact.");
+        }
+        if (gameOverScreen == null)
+        {
+            TryResolveGameOverScreen();
         }
         if (gameOverScreen != null)
         {
@@ -74,7 +82,7 @@ public class DeathController : MonoBehaviour
 
     void OnDisable()
     {
-        if (collisionHandler != null)
+        if (collisionHandler != null && collisionHandler.onHeavyImpact != null)
         {
             collisionHandler.onHeavyImpact.RemoveListener(OnHeavyImpact);
         }
@@ -132,10 +140,17 @@ public class DeathController : MonoBehaviour
         if (carHandler != null) carHandler.TriggerExploded();
         if (debugLogs) Debug.Log("[DeathController] GAME OVER: Time scaled to 0, controls disabled.");
 
+        // Ensure UI reference (handles inactive UI in scene)
+        if (gameOverScreen == null)
+        {
+            TryResolveGameOverScreen();
+        }
+
         // Show UI overlay if provided
         if (gameOverScreen != null)
         {
             gameOverScreen.SetActive(true);
+            ActivateAllChildren(gameOverScreen);
             var goUI = gameOverScreen.GetComponent<GameOverUI>();
             if (goUI != null)
             {
@@ -154,5 +169,81 @@ public class DeathController : MonoBehaviour
             else if (debugLogs) Debug.Log("[DeathController] GameOverScreen has no GameOverUI component.");
         }
         else if (debugLogs) Debug.Log("[DeathController] No GameOverScreen assigned (optional). UI not shown.");
+    }
+
+    void TryResolveGameOverScreen()
+    {
+        if (gameOverScreen != null) return;
+
+        // 1) Try find GameOverUI including inactive
+#if UNITY_2023_1_OR_NEWER
+        var goUI = UnityEngine.Object.FindFirstObjectByType<GameOverUI>(FindObjectsInactive.Include);
+        if (goUI == null)
+        {
+            var all = UnityEngine.Object.FindObjectsByType<GameOverUI>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            if (all != null && all.Length > 0) goUI = all[0];
+        }
+#else
+        var candidates = Resources.FindObjectsOfTypeAll<GameOverUI>();
+        GameOverUI goUI = null;
+        foreach (var c in candidates)
+        {
+            if (c == null) continue;
+            // Ignore prefabs in Assets; take scene instances only
+            if (c.gameObject.scene.IsValid()) { goUI = c; break; }
+        }
+#endif
+        if (goUI != null)
+        {
+            gameOverScreen = goUI.gameObject;
+            if (debugLogs) Debug.Log("[DeathController] Auto-assigned GameOverScreen from scene (inactive supported).");
+            return;
+        }
+
+        // 2) Fallback: search by name in active scene (includes inactive hierarchy)
+        var scene = SceneManager.GetActiveScene();
+        if (scene.IsValid())
+        {
+            var roots = scene.GetRootGameObjects();
+            foreach (var root in roots)
+            {
+                var tr = root.transform;
+                var found = FindInChildrenByName(tr, "Game Over Screen");
+                if (found != null)
+                {
+                    gameOverScreen = found.gameObject;
+                    if (debugLogs) Debug.Log("[DeathController] Auto-assigned GameOverScreen by deep name search.");
+                    return;
+                }
+            }
+        }
+    }
+
+    Transform FindInChildrenByName(Transform parent, string name)
+    {
+        if (parent.name == name) return parent;
+        for (int i = 0; i < parent.childCount; i++)
+        {
+            var c = parent.GetChild(i);
+            var r = FindInChildrenByName(c, name);
+            if (r != null) return r;
+        }
+        return null;
+    }
+
+    void ActivateAllChildren(GameObject root)
+    {
+        var transforms = root.GetComponentsInChildren<Transform>(true);
+        foreach (var tr in transforms)
+        {
+            if (tr == null) continue;
+            if (!tr.gameObject.activeSelf) tr.gameObject.SetActive(true);
+        }
+    }
+
+    // Public helper to configure heavy-impact behavior from spawner
+    public void SetAlwaysDieOnHeavyImpact(bool value)
+    {
+        dieOnAnyHeavyImpact = value;
     }
 }

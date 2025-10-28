@@ -31,6 +31,12 @@ public class CarCollisionHandler : MonoBehaviour
     {
         if (carRigidbody == null)
             carRigidbody = GetComponent<Rigidbody>();
+
+        // Ensure the event is initialized when this component is added at runtime
+        if (onHeavyImpact == null)
+        {
+            onHeavyImpact = new UnityEvent();
+        }
     }
 
     /// <summary>

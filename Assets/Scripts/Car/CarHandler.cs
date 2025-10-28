@@ -69,8 +69,8 @@ public class CarHandler : MonoBehaviour
 
         UpdateCarAudio();
 
-        //updated distance traveled
-        distanceTraveled = transform.position.z - carStartPositionZ;
+        // Updated distance traveled (robust to model forward facing -Z)
+        distanceTraveled = Mathf.Abs(transform.position.z - carStartPositionZ);
     }
     void FixedUpdate()
     {
